@@ -13,17 +13,22 @@ import com.alibaba.fastjson.JSON;
 public class ConfigurationLoader<T> {
     private static Logger log = LoggerFactory.getLogger(ConfigurationLoader.class); 
     private List<T> confList;
+    private Class<T> elementClass;
     private String confFile;
     private String content;
     
-    public void load(Class<T> clazz) {
+    public ConfigurationLoader(Class<T> elementClass) {
+    	this.elementClass = elementClass;
+    }
+    
+    public void load() {
         try {
             readFile();
         } catch(IOException e) {
             log.error("Configureation load error.", e);
             return;
         }
-        confList = JSON.parseArray(content, clazz);
+        confList = JSON.parseArray(content, elementClass);
     }
     
     private void readFile() throws IOException {
@@ -47,14 +52,22 @@ public class ConfigurationLoader<T> {
     
     public void load(String confFile) {
         setConfFile(confFile);
-//        load();
+        load();
     }
 
     public List<T> getConfList() {
         return confList;
     }
 
-    public String getConfFile() {
+	public Class<T> getElementClass() {
+		return elementClass;
+	}
+
+	public void setElementClass(Class<T> elementClass) {
+		this.elementClass = elementClass;
+	}
+
+	public String getConfFile() {
         return confFile;
     }
 
