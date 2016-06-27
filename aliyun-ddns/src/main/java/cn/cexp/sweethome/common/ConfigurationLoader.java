@@ -50,6 +50,13 @@ public class ConfigurationLoader<T> {
         content = contentBuilder.toString();
     }
     
+    public T getConfUnique() {
+    	if(null != confList && 0 != confList.size()) {
+    		return confList.get(0);
+    	}
+    	return null;
+    }
+    
     public void load(String confFile) {
         setConfFile(confFile);
         load();

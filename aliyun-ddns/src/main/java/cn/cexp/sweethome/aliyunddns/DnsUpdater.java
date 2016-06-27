@@ -12,7 +12,6 @@ import com.aliyuncs.alidns.model.v20150109.DescribeDomainRecordsResponse;
 import com.aliyuncs.alidns.model.v20150109.DescribeDomainRecordsResponse.Record;
 import com.aliyuncs.alidns.model.v20150109.UpdateDomainRecordRequest;
 import com.aliyuncs.exceptions.ClientException;
-import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 
@@ -29,7 +28,7 @@ public class DnsUpdater {
 		setConf(conf);
 	}
 
-	public void list() {
+	public void load() {
 		record = null;
 		DescribeDomainRecordsRequest req = new DescribeDomainRecordsRequest();
 		req.setDomainName(conf.getDomainName());
