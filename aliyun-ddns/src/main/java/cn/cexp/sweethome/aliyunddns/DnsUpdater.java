@@ -16,7 +16,7 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 
 public class DnsUpdater {
-	private static Logger log = LoggerFactory.getLogger(DnsUpdater.class); 
+	private static Logger log = LoggerFactory.getLogger(DnsUpdater.class);
 	private IAcsClient client;
 	private DdnsConf conf;
 	private Record record;
@@ -42,13 +42,10 @@ public class DnsUpdater {
 			return;
 		}
 		List<Record> records = resp.getDomainRecords();
-		if(null != records) {
-			for(Record rec : records) {
-				if(true == conf.getResourceRecord().equalsIgnoreCase(rec.getRR())) {
-					record = rec;
-					break;
-				} else if(0 == conf.getResourceRecord().length() && "@".equals(rec.getRR())) {
-					record = rec;
+		if (null != records) {
+			for (Record rec : records) {
+				if(true == conf.equalsRecord(rec)) {
+					this.record = rec;
 					break;
 				}
 			}
