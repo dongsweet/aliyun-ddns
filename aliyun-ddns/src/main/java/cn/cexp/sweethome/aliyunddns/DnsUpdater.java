@@ -11,9 +11,12 @@ import com.aliyuncs.alidns.model.v20150109.DescribeDomainRecordsRequest;
 import com.aliyuncs.alidns.model.v20150109.DescribeDomainRecordsResponse;
 import com.aliyuncs.alidns.model.v20150109.DescribeDomainRecordsResponse.Record;
 import com.aliyuncs.alidns.model.v20150109.UpdateDomainRecordRequest;
+import com.aliyuncs.alidns.model.v20150109.UpdateDomainRecordResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+
+import cn.cexp.sweethome.common.GenericUtils;
 
 public class DnsUpdater {
 	private static Logger log = LoggerFactory.getLogger(DnsUpdater.class);
@@ -38,7 +41,7 @@ public class DnsUpdater {
 		try {
 			resp = client.getAcsResponse(req);
 		} catch (ClientException e) {
-			log.error("Domain list error with {}: {}.", conf, e);
+			log.error("Domain load error with {}:", conf, e);
 			return;
 		}
 		List<Record> records = resp.getDomainRecords();
@@ -53,9 +56,50 @@ public class DnsUpdater {
 	}
 
 	public boolean doUpdate() {
+	    if(null == this.record) {
+	        throw buildIllegalStateException();
+        }
 		UpdateDomainRecordRequest request = new UpdateDomainRecordRequest();
-		request.setLine("");
+		request.setRecordId(record.getRecordId());
+		request.setRR(record.getRR());
+		request.setType(record.getType());
+		request.setValue(record.getValue());
+		request.setTTL(record.getTTL());
+		request.setPriority(record.getPriority());
+		request.setLine(record.getLine());
+		UpdateDomainRecordResponse resp = null;
+		try {
+            resp = client.getAcsResponse(request);
+        } catch (ClientException e) {
+            log.error("Domain update error with {}:", conf, e);
+            return false;
+        }
+		if(true == GenericUtils.equals(record.getRecordId(), resp.getRecordId())) {
+		    return true;
+		}
 		return false;
+	}
+	
+	public boolean available() {
+	    return null != this.record;
+	}
+	
+	public void updateValue(String ip) {
+	    if(null == this.record) {
+	        throw buildIllegalStateException();
+	    }
+	    this.record.setValue(ip);
+	}
+	
+	public String getValue() {
+	    if(null == this.record) {
+            throw buildIllegalStateException();
+        }
+	    return this.record.getValue();
+	}
+	
+	private IllegalStateException buildIllegalStateException() {
+	    return new IllegalStateException("No record obtained. Maybe you haven't run load()?");
 	}
 
 	private void buildClient() {
@@ -74,13 +118,5 @@ public class DnsUpdater {
 	public void setConf(DdnsConf conf) {
 		this.conf = conf;
 		buildClient();
-	}
-
-	public Record getRecord() {
-		return record;
-	}
-
-	public void setRecord(Record record) {
-		this.record = record;
 	}
 }
