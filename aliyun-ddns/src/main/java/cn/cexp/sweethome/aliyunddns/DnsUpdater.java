@@ -84,14 +84,14 @@ public class DnsUpdater {
 	    return null != this.record;
 	}
 	
-	public void updateValue(String ip) {
+	public void setRecordValue(String ip) {
 	    if(null == this.record) {
 	        throw buildIllegalStateException();
 	    }
 	    this.record.setValue(ip);
 	}
 	
-	public String getValue() {
+	public String getRecordValue() {
 	    if(null == this.record) {
             throw buildIllegalStateException();
         }

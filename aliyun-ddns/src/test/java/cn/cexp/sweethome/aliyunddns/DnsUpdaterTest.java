@@ -23,7 +23,7 @@ public class DnsUpdaterTest {
 	public void testLoad() {
 		DnsUpdater updater = new DnsUpdater(conf);
 		updater.load();
-		Record r = updater.getRecord();
-		System.out.println(r);
+//		Record r = updater.getRecord();
+//		System.out.println(r);
 	}
 }
