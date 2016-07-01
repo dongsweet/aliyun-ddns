@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 
 public class ConfigurationLoader<T> {
-    private static Logger log = LoggerFactory.getLogger(ConfigurationLoader.class); 
+    @SuppressWarnings("unused")
+	private static Logger log = LoggerFactory.getLogger(ConfigurationLoader.class); 
     private List<T> confList;
     private Class<T> elementClass;
     private String confFile;
@@ -21,13 +22,8 @@ public class ConfigurationLoader<T> {
     	this.elementClass = elementClass;
     }
     
-    public void load() {
-        try {
-            readFile();
-        } catch(IOException e) {
-            log.error("Configureation load error.", e);
-            return;
-        }
+    public void load() throws IOException {
+        readFile();
         confList = JSON.parseArray(content, elementClass);
     }
     
@@ -57,7 +53,7 @@ public class ConfigurationLoader<T> {
     	return null;
     }
     
-    public void load(String confFile) {
+    public void load(String confFile) throws IOException {
         setConfFile(confFile);
         load();
     }

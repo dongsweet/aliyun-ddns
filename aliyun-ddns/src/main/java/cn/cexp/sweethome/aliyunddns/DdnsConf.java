@@ -9,8 +9,10 @@ public class DdnsConf extends ConfBase {
     private String domainName;
     private String resourceRecord;
     private String type;
+    private int checkPeriod;
+    private String watchNic;
 
-    public String getDomainName() {
+	public String getDomainName() {
         return domainName;
     }
 
@@ -33,6 +35,22 @@ public class DdnsConf extends ConfBase {
     public void setType(String type) {
         this.type = type;
     }
+    
+    public int getCheckPeriod() {
+		return checkPeriod;
+	}
+
+	public void setCheckPeriod(int checkPeriod) {
+		this.checkPeriod = checkPeriod;
+	}
+
+	public String getWatchNic() {
+		return watchNic;
+	}
+
+	public void setWatchNic(String watchNic) {
+		this.watchNic = watchNic;
+	}
 
     public boolean equalsRecord(Record rec) {
         if (false == GenericUtils.equals(this.getDomainName(), rec.getDomainName())) {
@@ -97,4 +115,12 @@ public class DdnsConf extends ConfBase {
         }
         return true;
     }
+
+	@Override
+	public String toString() {
+		return "DdnsConf [domainName=" + domainName + ", resourceRecord=" + resourceRecord + ", type=" + type
+				+ ", checkPeriod=" + checkPeriod + ", watchNic=" + watchNic + "]";
+	}
+    
+    
 }

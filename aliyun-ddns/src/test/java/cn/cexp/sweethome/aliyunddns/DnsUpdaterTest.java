@@ -1,5 +1,7 @@
 package cn.cexp.sweethome.aliyunddns;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +15,7 @@ public class DnsUpdaterTest {
 	private DdnsConf conf;
 
 	@Before
-	public void before() {
+	public void before() throws IOException {
 		loader = new ConfigurationLoader<DdnsConf>(DdnsConf.class);
 		loader.load("D:\\ddns.conf");
 		conf = loader.getConfUnique();
