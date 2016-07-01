@@ -26,4 +26,15 @@ public class DnsUpdaterTest {
 //		Record r = updater.getRecord();
 //		System.out.println(r);
 	}
+	
+	@Test
+	public void testUpdate() {
+	    DnsUpdater updater = new DnsUpdater(conf);
+	    updater.load();
+	    System.out.println(updater.getRecordValue());
+	    updater.setRecordValue("1.2.3.4");
+	    updater.doUpdate();
+	    updater.load();
+	    System.out.println(updater.getRecordValue());
+	}
 }
