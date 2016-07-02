@@ -22,11 +22,12 @@ public class DnsUpdateJob implements Job {
 		if(false == GenericUtils.isNullOrEmpty(ipv4Addr)) {
 			updater.load();
 			if(true == ipv4Addr.equals(updater.getRecordValue())) {
-				log.info("IP not changed, will not perform update with {}.", conf);
+				log.info("IP {} not changed, will not perform update with {}.", ipv4Addr, conf);
 			} else {
 				log.info("Will perform update {} with ip: {}.", conf, ipv4Addr);
 				updater.setRecordValue(ipv4Addr);
-				updater.doUpdate();
+				boolean result = updater.doUpdate();
+				log.info("Update result: {}.", result);
 			}
 		}
 	}

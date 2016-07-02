@@ -40,6 +40,7 @@ public class Main {
 		loader = new ConfigurationLoader<DdnsConf>(DdnsConf.class);
 		try {
 			scheduler = new StdSchedulerFactory().getScheduler();
+			scheduler.start();
 		} catch (SchedulerException e) {
 			log.error("Build scheduler error.", e);
 		}
@@ -56,24 +57,38 @@ public class Main {
 			return;
 		}
 		List<DdnsConf> confs = loader.getConfList();
+		int scheduleCount = 0;
 		for (DdnsConf conf : confs) {
-			JobKey jk = new JobKey(conf.toString(), Constants.JOB_KEY_GROUP);
-			TriggerKey tk = new TriggerKey(conf.toString(), Constants.JOB_KEY_GROUP);
+			// JobKey jk = new JobKey(conf.toString(), Constants.JOB_KEY_GROUP);
+			// TriggerKey tk = new TriggerKey(conf.toString(),
+			// Constants.JOB_KEY_GROUP);
 			JobDataMap jdMap = new JobDataMap();
 			DnsUpdater updater = new DnsUpdater(conf);
 			NicAddressLoader nicLoader = new NicAddressLoader(conf);
 			jdMap.put(Constants.JOB_DATA_KEY_CONF, conf);
 			jdMap.put(Constants.JOB_DATA_KEY_UPDATER, updater);
 			jdMap.put(Constants.JOB_DATA_KEY_NIC_LOADER, nicLoader);
-			JobDetail job = JobBuilder.newJob(DnsUpdateJob.class).setJobData(jdMap).withIdentity(jk).build();
-			Trigger trigger = TriggerBuilder.newTrigger().forJob(job).startNow()
+			JobDetail job = JobBuilder.newJob(DnsUpdateJob.class).setJobData(jdMap).build();
+			Trigger trigger = TriggerBuilder.newTrigger().startNow()
 					.withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(conf.getCheckPeriod())).build();
 			try {
-				scheduler.scheduleJob(trigger);
+				scheduler.scheduleJob(job, trigger);
+				log.info("Scheduled job with {}", conf);
+				scheduleCount++;
 			} catch (SchedulerException e) {
 				log.error("Schdule job error with {}. ", conf, e);
 			}
 		}
+
+		if (0 == scheduleCount) {
+			log.info("No job scheduled, scheduler will shutdown.");
+			try {
+				scheduler.shutdown();
+			} catch (SchedulerException e) {
+				log.error("No job scheduled shutdown error. ", e);
+			}
+		}
+
 	}
 
 	private boolean tryLoadConf() {
@@ -112,7 +127,7 @@ public class Main {
 		CommandLine cmd = parser.parse(opt, args);
 		if (cmd.hasOption("h")) {
 			HelpFormatter hf = new HelpFormatter();
-            hf.printHelp("java ddns.jar [-c file_path]", "", opt, "");
+			hf.printHelp("Usage: java ddns.jar [-c conf_file_path]", "", opt, "");
 			System.exit(0);
 		}
 		if (cmd.hasOption("c")) {
