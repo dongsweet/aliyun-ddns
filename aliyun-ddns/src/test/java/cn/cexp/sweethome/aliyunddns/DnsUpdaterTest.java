@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aliyuncs.alidns.model.v20150109.DescribeDomainRecordsResponse.Record;
-
 import cn.cexp.sweethome.common.ConfigurationLoader;
 
 public class DnsUpdaterTest {
